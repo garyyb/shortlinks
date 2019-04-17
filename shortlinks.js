@@ -5,9 +5,25 @@ class ShortlinkManager {
     this.listener = null;
 
     this.setInstallationListener_();
+    this.setStorageChangedListener_();
     this.syncShortlinks_();
   }
 
+  /**
+   * @param {string} shortlink The shortlink. Should exclude the url scheme.
+   * @param {string} result The url string to map the shortlink to.
+   */
+  addShortlink(shortlink, result) {
+    console.log('Shortlinks: Adding Shortlink: ' + shortlink + ': ' + result);
+    browser.storage.sync.set({[shortlink]: result}).catch(
+      reason => console.log('Shortlinks: Failed to add shortlink ' +
+        shortlink + ': '  + result + ' to sync storage. Reason: ' + reason));
+  }
+
+  /**
+   * Sets the listener for the onInstalled event, to set some sane default
+   * configurations for a new user.
+   */
   setInstallationListener_() {
     /**
      * Listener for when the extension is installed or updated. Sets the default
@@ -31,11 +47,7 @@ class ShortlinkManager {
           isEmpty => {
             if (!isEmpty) return;
             defaultShortlinks.forEach((value, key, _) => {
-              console.log('Shortlinks: Adding Shortlink: ' + key + ': ' 
-                + value);
-              browser.storage.sync.set({[key]: value}).catch(
-                reason => console.log('Shortlinks: Failed to add shortlink ' +
-                  key + ': '  + value + ' to sync storage. Reason: ' + reason));
+              this.addShortlink(key, value);
             });
           }, 
           reason => console.log('Shortlinks: Fetching sync storage bytes in \
@@ -44,6 +56,27 @@ class ShortlinkManager {
     }
   
     browser.runtime.onInstalled.addListener(installationListener);
+  }
+
+  /**
+   * Sets a listener for the contents of sync storage changing, indicating that
+   * shortlinks mappings have changed.
+   */
+  setStorageChangedListener_() {
+    /**
+     * @param {Object} changes Object describing the change. 
+     * @param {string} areaName The name of the storage area changed.
+     */
+    const storageListener = (changes, areaName) => {
+      // TODO: Utilize changes object instead of reloading the whole Map. See
+      // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/storage/onChanged#Parameters.
+      if (areaName === 'sync') {
+        console.log('Shortlinks: Detected change in shortlinks.');
+        this.syncShortlinks_();
+      }
+    };
+
+    browser.storage.onChanged.addListener(storageListener);
   }
 
   /**
@@ -69,7 +102,7 @@ class ShortlinkManager {
         console.log('Shortlinks: Syncing shortlinks: ');
         console.log(results);
         this.shortlinks = new Map(Object.entries(results));
-        this.updateRequestListener_();
+        if (this.shortlinks.size > 0) this.updateRequestListener_();
       },
       reason => console.log('Shortlinks: Failed to sync shortlinks with \
         reason: ' + reason));
