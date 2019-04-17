@@ -1,0 +1,20 @@
+{
+  "applications": {
+    "gecko": {
+      "id": "shortlinks@garyyb"
+    }
+  },
+  "description": "Browser extension for shortlinks to make navigating to frequent pages easier.",
+  "manifest_version": 2,
+  "name": "shortlinks",
+  "version": "1.0",
+  "permissions": [
+    "storage",
+    "webRequest",
+    "webRequestBlocking",
+    "<all_urls>"
+  ],
+  "background": {
+    "scripts": ["shortlinks.js"]
+  }
+}
