@@ -93,8 +93,8 @@ class ShortlinkManager {
               this.addShortlink(key, value);
             });
           }, 
-          reason => console.log('Shortlinks: Fetching sync storage bytes in \
-            use failed with reason: ' + reason));
+          reason => console.log('Shortlinks: Fetching sync storage bytes in ' +
+            'use failed with reason: ' + reason));
       }
     }
   
@@ -169,8 +169,8 @@ class ShortlinkManager {
         this.shortlinks_ = new Map(Object.entries(results));
         if (this.shortlinks_.size > 0) this.updateRequestListener_();
       },
-      reason => console.log('Shortlinks: Failed to sync shortlinks with \
-        reason: ' + reason));
+      reason => console.log('Shortlinks: Failed to sync shortlinks with ' +
+        'reason: ' + reason));
   }
 
   /**
