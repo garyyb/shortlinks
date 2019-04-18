@@ -1,0 +1,13 @@
+* {
+  --mdc-theme-primary: #125cdb;
+  --mdc-theme-secondary: #ee8402;
+  --mdc-theme-background: #ffffff;
+  --mdc-theme-surface: #ffffff;
+  --mdc-theme-on-primary: #ffffff;
+  --mdc-theme-on-secondary: #000000;
+  --mdc-theme-on-surface: #000000;
+}
+
+body {    
+  margin: 0;
+}

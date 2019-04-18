@@ -16,5 +16,10 @@
   ],
   "background": {
     "scripts": ["build/background-compiled.js"]
+  },
+  "options_ui": {
+    "page": "src/options/options.html",
+    "browser_style": false,
+    "open_in_tab": true
   }
 }
