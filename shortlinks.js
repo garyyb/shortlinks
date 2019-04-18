@@ -1,23 +1,61 @@
+const AddErrorType = Object.freeze({
+  DUPLICATE : Symbol('Duplicate'),
+  OTHER     : Symbol('Other')
+});
+
 /** Manages shortlinks, storing them, updating them, and setting redirects. */
 class ShortlinkManager {
   constructor() {
-    this.shortlinks = new Map();
-    this.listener = null;
+    this.shortlinks_ = new Map();
+    this.listener_ = null;
 
     this.setInstallationListener_();
     this.setStorageChangedListener_();
     this.syncShortlinks_();
+    this.setMessageListener_();
   }
 
   /**
    * @param {string} shortlink The shortlink. Should exclude the url scheme.
    * @param {string} result The url string to map the shortlink to.
+   * @return {Promise} Promise which is resolved with no message if the add was
+   *                   successful, or rejected with a reason if it wasn't.
    */
   addShortlink(shortlink, result) {
-    console.log('Shortlinks: Adding Shortlink: ' + shortlink + ': ' + result);
-    browser.storage.sync.set({[shortlink]: result}).catch(
-      reason => console.log('Shortlinks: Failed to add shortlink ' +
-        shortlink + ': '  + result + ' to sync storage. Reason: ' + reason));
+    shortlink = 'http://' + shortlink;
+    return new Promise((resolve, reject) => {
+      browser.storage.sync.get(shortlink).then(
+        results => {
+          if (Object.entries(results).length === 0) {
+            console.log('Shortlinks: Adding Shortlink: ' + shortlink + ': ' + 
+              result);
+            browser.storage.sync.set({[shortlink]: result}).then(
+              () => resolve(),
+              reason => {
+                console.log('Shortlinks: Failed to add shortlink ' + shortlink
+                   + ': ' + result + ' to sync storage. Reason: ' + reason);
+                reject(AddErrorType.OTHER);
+              }
+            )
+          } else {
+            reject(AddErrorType.DUPLICATE);
+          }
+        }, 
+        reason => {
+          console.log('Shortlinks: Failed to query storage for shortlink ' +
+            shortlink + '. Reason: ' + reason);
+          reject(AddErrorType.OTHER);
+        });
+    });
+  }
+
+  /**
+   * @param {string} shortlink The shortlink to delete.
+   * @return {Promise} Promise which is resolved with no message id the delete
+   *                   was successful, or rejected with a reason if it wasn't.
+   */
+  deleteShortlink(shortlink) {
+    return browser.storage.sync.remove(shortlink);
   }
 
   /**
@@ -32,8 +70,8 @@ class ShortlinkManager {
      */
     const installationListener = (details) => {
       const defaultShortlinks = new Map([
-        ['http://c/', 'https://calendar.google.com/'],
-        ['http://m/', 'https://mail.google.com/']
+        ['c/', 'https://calendar.google.com/'],
+        ['m/', 'https://mail.google.com/']
       ]);
 
       // Only set default shortlinks if this is the first time the extension
@@ -46,7 +84,7 @@ class ShortlinkManager {
         this.isSyncStorageEmpty_().then(
           isEmpty => {
             if (!isEmpty) return;
-            defaultShortlinks.forEach((value, key, _) => {
+            defaultShortlinks.forEach((value, key) => {
               this.addShortlink(key, value);
             });
           }, 
@@ -80,6 +118,28 @@ class ShortlinkManager {
   }
 
   /**
+   * Sets a listener for messages to modify shortlinks from other parts of the
+   * extension.
+   */
+  setMessageListener_() {
+    /**
+     * @param {Object} request Request which contains a requestType property.
+     * @returns {Promise} Promise fulfilled with an empty value if the request
+     *                    was successful, and rejected with an appropriate error
+     *                    type if not.
+     */
+    const messageListener = (request) => {
+      if (request.messageType === MessageType.ADD) {
+        return this.addShortlink(request.shortlink, request.result);
+      } else if (request.messageType === MessageType.DELETE) {
+        return this.deleteShortlink(request.shortlink);
+      }
+    };
+
+    browser.runtime.onMessage.addListener(messageListener);
+  }
+
+  /**
    * Checks if sync storage is empty.
    * @returns {Promise} Promise fulfilled with a boolean indicating if sync
    *                    storage is empty. 
@@ -101,8 +161,8 @@ class ShortlinkManager {
       results => {
         console.log('Shortlinks: Syncing shortlinks: ');
         console.log(results);
-        this.shortlinks = new Map(Object.entries(results));
-        if (this.shortlinks.size > 0) this.updateRequestListener_();
+        this.shortlinks_ = new Map(Object.entries(results));
+        if (this.shortlinks_.size > 0) this.updateRequestListener_();
       },
       reason => console.log('Shortlinks: Failed to sync shortlinks with \
         reason: ' + reason));
@@ -113,21 +173,21 @@ class ShortlinkManager {
    * the shortlinks stored in sync storage. 
    */
   updateRequestListener_() {
-    if (this.listener !== null) {
-      browser.webRequest.onBeforeRequest.removeListener(this.listener);
+    if (this.listener_ !== null) {
+      browser.webRequest.onBeforeRequest.removeListener(this.listener_);
     }
 
-    this.listener = (requestDetails) => {
+    this.listener_ = (requestDetails) => {
       const shortlink = requestDetails.url;
       console.log('Shortlinks: Detected Shortlink: ' + shortlink);
       return {
-        redirectUrl: this.shortlinks.get(shortlink)
+        redirectUrl: this.shortlinks_.get(shortlink)
       };
     }
 
     browser.webRequest.onBeforeRequest.addListener(
-      this.listener,
-      {urls: [...this.shortlinks.keys()]},
+      this.listener_,
+      {urls: [...this.shortlinks_.keys()]},
       ['blocking']
     );
   }
