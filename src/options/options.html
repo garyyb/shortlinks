@@ -4,7 +4,7 @@
   <head>
     <link href="../styles/material-components-web.min.css" rel="stylesheet">
     <link href="../styles/material-icons.css" rel="stylesheet">
-    <link href="../styles/colors.css" rel="stylesheet">
+    <link href="../styles/styles.css" rel="stylesheet">
     <script src="../styles/material-components-web.min.js"></script>
     <meta charset="utf-8"/>
   </head>
@@ -17,5 +17,33 @@
         </section>
       </div>
     </header>
+
+    <div class="mdc-card header-padding">
+      <div class="mdc-card__primary">
+        <h2 class="mdc-card__title mdc-typography mdc-typography--headline5">Configure Shortlinks</h2>
+      </div>
+
+      <ul class="mdc-list mdc-list--two-line">
+        <li class="mdc-list-item" tabindex="0">
+          <span class="mdc-list-item__text">
+            <span class="mmdc-list-item__primary-text">c/</span>
+            <span class="mdc-list-item__secondary-text">calendar.google.com/</span>
+          </span>
+          <span class="mdc-list-item__meta material-icons" aria-hidden="true">delete</span>
+        </li>
+        <li class="mdc-list-item">
+          <span>
+            <span class="mmdc-list-item__primary-text">m/</span>
+            <span class="mdc-list-item__secondary-text">mail.google.com/</span>
+          </span>
+          <span class="mdc-list-item__meta material-icons" aria-hidden="true">delete</span>
+        </li>
+      </ul>
+
+      <div class="mdc-card__actions">
+        <div class="mdc-card__action-buttons">
+          <button class="mdc-button mdc-card__action mdc-card__action--button">Add</button>
+        </div>
+    </div>
   </body>
 </html>

@@ -11,3 +11,19 @@
 body {    
   margin: 0;
 }
+
+.header-padding {
+  padding-top: 64px;
+  margin-left: 24px;
+  margin-right: 24px;
+}
+
+.mdc-card {
+  margin-left: 25%;
+  margin-right: 25%;
+}
+
+.mdc-card__title {
+  padding: 12px;
+  padding-bottom: 0px;
+}
