@@ -15,6 +15,6 @@
     "<all_urls>"
   ],
   "background": {
-    "scripts": ["shortlinks.js"]
+    "scripts": ["build/background-compiled.js"]
   }
 }
