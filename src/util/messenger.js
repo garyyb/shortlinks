@@ -6,7 +6,8 @@ goog.module('shortlinks.util.messenger');
  */
 const MessageType = Object.freeze({
   ADD    : 1,
-  DELETE : 2
+  DELETE : 2,
+  FETCH  : 3
 });
 
 class ShortlinkMessenger {
@@ -17,7 +18,7 @@ class ShortlinkMessenger {
    * @returns {Promise} Promise which is resolved with no message if the add was
    *                    successful, or rejected with a reason if it wasn't. 
    */
-  sendAddMessage(shortlink, result) {
+  static sendAddMessage(shortlink, result) {
     return browser.runtime.sendMessage({
       messageType: MessageType.ADD,
       shortlink: shortlink,
@@ -30,10 +31,20 @@ class ShortlinkMessenger {
    * @return {Promise} Promise which is resolved with no message id the delete
    *                   was successful, or rejected with a reason if it wasn't.
    */
-  sendDeleteMessage(shortlink) {
+  static sendDeleteMessage(shortlink) {
     return browser.runtime.sendMessage({
       messageType: MessageType.DELETE,
       shortlink: shortlink
+    });
+  }
+
+  /**
+   * @return {Promise} Promise resolved with a Map containing the currently
+   *                   loaded shortlinks, or rejected on an error.
+   */
+  static sendFetchMessage() {
+    return browser.runtime.sendMessage({
+      messageType: MessageType.FETCH
     });
   }
 }

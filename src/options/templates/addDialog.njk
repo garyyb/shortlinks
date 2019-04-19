@@ -1,0 +1,28 @@
+{% block addDialog %}
+
+<div class="mdc-dialog"
+     role="alertdialog"
+     aria-modal="true"
+     aria-labelledby="Add A Shortlink"
+     id="add-dialog">
+  <div class="mdc-dialog__container">
+    <div class="mdc-dialog__surface">
+      <h2 class="mdc-dialog__title">Add A Shortlink</h2>
+      <div class="mdc-dialog__content">
+        Add a new Shortlink.
+      </div>
+
+      <footer class="mdc-dialog__actions">
+        <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="close">
+          <span class="mdc-button__label">Cancel</span>
+        </button>
+        <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="accept">
+          <span class="mdc-button__label">Add</span>
+        </button>
+      </footer>
+    </div>
+  </div>
+  <div class="mdc-dialog__scrim"></div>
+</div>
+
+{% endblock %}

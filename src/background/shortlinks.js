@@ -1,7 +1,8 @@
 goog.module('shortlinks.background.shortlinks');
 
-const messenger = goog.require('shortlinks.util.messenger');
-const MessageType = messenger.MessageType;
+const {MessageType} = goog.require('shortlinks.util.messenger');
+
+const {canonicalize, stripScheme} = goog.require('shortlinks.util.canonicalize');
 
 const AddErrorType = Object.freeze({
   DUPLICATE : Symbol('Duplicate'),
@@ -29,7 +30,9 @@ class ShortlinkManager {
    *                   successful, or rejected with a reason if it wasn't.
    */
   addShortlink(shortlink, result) {
-    shortlink = 'http://' + shortlink;
+    shortlink = canonicalize(shortlink);
+    result = canonicalize(result);
+
     return new Promise((resolve, reject) => {
       browser.storage.sync.get(shortlink).then(
         results => {
@@ -63,6 +66,20 @@ class ShortlinkManager {
    */
   deleteShortlink(shortlink) {
     return browser.storage.sync.remove(shortlink);
+  }
+
+  /**
+   * @return {Promise} Promise resolved with a map containing the currently
+   *                   loaded shortlinks.
+   */
+  fetchShortlinks() {
+    // We want to return a user friendly version, without schemes.
+    let stripped = new Map();
+    this.shortlinks_.forEach((result, shortlink) => {
+      stripped.set(stripScheme(shortlink), stripScheme(result));
+    });
+
+    return Promise.resolve(stripped);
   }
 
   /**
@@ -140,6 +157,8 @@ class ShortlinkManager {
         return this.addShortlink(request.shortlink, request.result);
       } else if (request.messageType === MessageType.DELETE) {
         return this.deleteShortlink(request.shortlink);
+      } else if (request.messageType === MessageType.FETCH) {
+        return this.fetchShortlinks();
       }
     };
 
