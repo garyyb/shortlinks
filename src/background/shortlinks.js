@@ -1,7 +1,7 @@
 goog.module('shortlinks.background.shortlinks');
 
-const Messenger = goog.require('shortlinks.util.messenger');
-const MessageType = Messenger.MessageType;
+const messenger = goog.require('shortlinks.util.messenger');
+const MessageType = messenger.MessageType;
 
 const AddErrorType = Object.freeze({
   DUPLICATE : Symbol('Duplicate'),
@@ -11,7 +11,9 @@ const AddErrorType = Object.freeze({
 /** Manages shortlinks, storing them, updating them, and setting redirects. */
 class ShortlinkManager {
   constructor() {
+    /** @private {!Map} */
     this.shortlinks_ = new Map();
+    /** @private {?Function} */
     this.listener_ = null;
 
     this.setInstallationListener_();
