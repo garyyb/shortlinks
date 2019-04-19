@@ -1,0 +1,25 @@
+{% block header %}
+<header class="mdc-top-app-bar">
+  <div class="mdc-top-app-bar__row">
+    <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+      <span class="mdc-top-app-bar__title">Shortlinks</span>
+    </section>
+  </div>
+</header>
+{% endblock %}
+
+{% block config %}
+<div class="mdc-card header-padding">
+  <div class="mdc-card__primary">
+    <h2 class="mdc-card__title mdc-typography mdc-typography--headline5">Configure Shortlinks</h2>
+  </div>
+
+  {% include "shortlinksList.njk" %}
+
+  <div class="mdc-card__actions">
+    <div class="mdc-card__action-buttons">
+      <button class="mdc-button mdc-card__action mdc-card__action--button">Add</button>
+    </div>
+  </div>  
+</div>
+{% endblock %}

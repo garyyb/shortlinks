@@ -1,0 +1,13 @@
+{% block shortlinksList %}
+  <ul class="mdc-list mdc-list--two-line" id="shortlinks-list">
+  {% for shortlink, result in shortlinks %}
+    <li class="mdc-list-item">
+      <span>
+        <span class="mmdc-list-item__primary-text">{{ shortlink }}</span>
+        <span class="mdc-list-item__secondary-text">{{ result }}</span>
+      </span>
+      <span class="mdc-list-item__meta material-icons" aria-hidden="true">delete</span>
+    </li>  
+  {% endfor %}  
+  </ul>
+{% endblock %}

@@ -4,6 +4,7 @@
       "id": "shortlinks@garyyb"
     }
   },
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self';",
   "description": "Browser extension for shortlinks to make navigating to frequent pages easier.",
   "manifest_version": 2,
   "name": "shortlinks",
