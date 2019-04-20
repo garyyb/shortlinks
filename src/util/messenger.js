@@ -24,7 +24,7 @@ class ShortlinkMessenger {
       shortlink: shortlink,
       result: result
     });
-
+    
     if (errorOrEmpty !== '') {
       throw errorOrEmpty;
     }
