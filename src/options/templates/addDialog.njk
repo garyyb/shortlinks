@@ -9,14 +9,42 @@
     <div class="mdc-dialog__surface">
       <h2 class="mdc-dialog__title">Add A Shortlink</h2>
       <div class="mdc-dialog__content">
-        Add a new Shortlink.
+
+        <div class="mdc-form-field">
+
+          <div class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon" id="shortlink-textfield">
+            <i class="material-icons mdc-text-field__icon">link</i>
+            <input class="mdc-text-field__input" required id="shortlink-input">
+            <div class="mdc-notched-outline">
+              <div class="mdc-notched-outline__leading"></div>
+              <div class="mdc-notched-outline__notch">
+                <label class="mdc-floating-label" for="shortlink-textfield">Shortlink</label>
+              </div>
+              <div class="mdc-notched-outline__trailing"></div>
+            </div>
+          </div>
+
+          <div class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon" id="result-textfield">
+            <i class="material-icons mdc-text-field__icon">link</i>
+            <input class="mdc-text-field__input" required id="result-input">
+            <div class="mdc-notched-outline">
+              <div class="mdc-notched-outline__leading"></div>
+              <div class="mdc-notched-outline__notch">
+                <label class="mdc-floating-label" for="result-textfield">Destination</label>
+              </div>
+              <div class="mdc-notched-outline__trailing"></div>
+            </div>
+          </div>
+
+        </div>
+
       </div>
 
       <footer class="mdc-dialog__actions">
         <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="close">
           <span class="mdc-button__label">Cancel</span>
         </button>
-        <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="accept">
+        <button type="button" class="mdc-button mdc-dialog__button" disabled id="dialog-add-button">
           <span class="mdc-button__label">Add</span>
         </button>
       </footer>
@@ -25,4 +53,26 @@
   <div class="mdc-dialog__scrim"></div>
 </div>
 
+{% endblock %}
+
+{% block snackbars %}
+<div class="mdc-snackbar" id="success-snackbar">
+  <div class="mdc-snackbar__surface">
+    <div class="mdc-snackbar__label"
+         role="status"
+         aria-live="polite">
+      Successfully added shortlink!
+    </div>
+  </div>
+</div>
+
+<div class="mdc-snackbar" id="failure-snackbar">
+  <div class="mdc-snackbar__surface">
+    <div class="mdc-snackbar__label"
+         role="status"
+         aria-live="polite">
+      Failed to add shortlink: an unknown error occurred.
+    </div>
+  </div>
+</div>
 {% endblock %}

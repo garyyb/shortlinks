@@ -5,8 +5,7 @@ const {MessageType} = goog.require('shortlinks.util.messenger');
 const {canonicalize, stripScheme} = goog.require('shortlinks.util.canonicalize');
 
 const AddErrorType = Object.freeze({
-  DUPLICATE : Symbol('Duplicate'),
-  OTHER     : Symbol('Other')
+  DUPLICATE : 'This shortlink already exists!'
 });
 
 /** Manages shortlinks, storing them, updating them, and setting redirects. */
@@ -26,46 +25,52 @@ class ShortlinkManager {
   /**
    * @param {string} shortlink The shortlink. Should exclude the url scheme.
    * @param {string} result The url string to map the shortlink to.
-   * @return {Promise} Promise which is resolved with no message if the add was
-   *                   successful, or rejected with a reason if it wasn't.
+   * @return {Promise} Promise which is resolved with empty string if the add
+   *                   was successful, or RESOLVED with an error message if not.
+   *                   The reason why we have to resolve, not reject, is because
+   *                   rejecting will simply result in an undefined error. See
+   *                   https://github.com/mozilla/webextension-polyfill/issues/179.
    */
-  addShortlink(shortlink, result) {
+  async addShortlink(shortlink, result) {
     shortlink = canonicalize(shortlink);
     result = canonicalize(result);
 
-    return new Promise((resolve, reject) => {
-      browser.storage.sync.get(shortlink).then(
-        results => {
-          if (Object.entries(results).length === 0) {
-            console.log('Shortlinks: Adding Shortlink: ' + shortlink + ': ' + 
-              result);
-            browser.storage.sync.set({[shortlink]: result}).then(
-              () => resolve(),
-              reason => {
-                console.log('Shortlinks: Failed to add shortlink ' + shortlink
-                   + ': ' + result + ' to sync storage. Reason: ' + reason);
-                reject(AddErrorType.OTHER);
-              }
-            )
-          } else {
-            reject(AddErrorType.DUPLICATE);
-          }
-        }, 
-        reason => {
-          console.log('Shortlinks: Failed to query storage for shortlink ' +
+    try {
+      const results = await browser.storage.sync.get(shortlink);
+      if (Object.entries(results).length === 0) {
+        console.log('Shortlinks: Adding Shortlink: ' + shortlink + ': ' + 
+          result);
+        try {
+          await browser.storage.sync.set({[shortlink]: result});
+          return '';
+        } catch (reason) {
+          console.log('Shortlinks: Failed to add shortlink ' + shortlink
+               + ': ' + result + ' to sync storage. Reason: ' + reason);
+          return reason;
+        }
+      } else {
+        return AddErrorType.DUPLICATE;
+      }
+    } catch (reason) {
+      console.log('Shortlinks: Failed to query storage for shortlink ' +
             shortlink + '. Reason: ' + reason);
-          reject(AddErrorType.OTHER);
-        });
-    });
+      return reason;
+    }
   }
 
   /**
    * @param {string} shortlink The shortlink to delete.
-   * @return {Promise} Promise which is resolved with no message id the delete
-   *                   was successful, or rejected with a reason if it wasn't.
+   * @return {Promise} Promise which is resolved with an empty string the delete
+   *                   was successful, or RESOLVED with a reason if it wasn't.
+   *                   See comments on addShortlink on why it's like this,
    */
-  deleteShortlink(shortlink) {
-    return browser.storage.sync.remove(shortlink);
+  async deleteShortlink(shortlink) {
+    try { 
+      await browser.storage.sync.remove(shortlink);
+      return '';
+    } catch (reason) {
+      return reason;
+    }
   }
 
   /**

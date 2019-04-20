@@ -18,12 +18,16 @@ class ShortlinkMessenger {
    * @returns {Promise} Promise which is resolved with no message if the add was
    *                    successful, or rejected with a reason if it wasn't. 
    */
-  static sendAddMessage(shortlink, result) {
-    return browser.runtime.sendMessage({
+  static async sendAddMessage(shortlink, result) {
+    const errorOrEmpty = await browser.runtime.sendMessage({
       messageType: MessageType.ADD,
       shortlink: shortlink,
       result: result
     });
+
+    if (errorOrEmpty !== '') {
+      throw errorOrEmpty;
+    }
   }
 
   /**
@@ -31,11 +35,15 @@ class ShortlinkMessenger {
    * @return {Promise} Promise which is resolved with no message id the delete
    *                   was successful, or rejected with a reason if it wasn't.
    */
-  static sendDeleteMessage(shortlink) {
-    return browser.runtime.sendMessage({
+  static async sendDeleteMessage(shortlink) {
+    const errorOrEmpty = browser.runtime.sendMessage({
       messageType: MessageType.DELETE,
       shortlink: shortlink
     });
+
+    if (errorOrEmpty !== '') {
+      throw errorOrEmpty;
+    }
   }
 
   /**
