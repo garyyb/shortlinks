@@ -27,3 +27,7 @@ body {
   padding: 12px;
   padding-bottom: 0px;
 }
+
+.mdc-text-field {
+  margin: 12px;
+}

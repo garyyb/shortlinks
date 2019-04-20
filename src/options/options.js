@@ -2,6 +2,10 @@ goog.module('shortlinks.options.options');
 
 const {ShortlinkMessenger} = goog.require('shortlinks.util.messenger');
 const MDCDialog = mdc.dialog.MDCDialog;
+const MDCSnackbar = mdc.snackbar.MDCSnackbar;
+const MDCTextField = mdc.textField.MDCTextField;
+
+const {canonicalize, stripScheme} = goog.require('shortlinks.util.canonicalize');
 
 nunjucks.configure('templates', {autoescape: true});
 
@@ -26,10 +30,67 @@ async function renderPage() {
  */
 function setupAddDialog() {
   const dialog = new MDCDialog(document.getElementById('add-dialog'));
-  const button = document.getElementById('add-button');
-  button.addEventListener('click', () => {
+  document.getElementById('add-button').addEventListener('click', () => {
     dialog.open();
   });
+
+  const linkTextfield = 
+      new MDCTextField(document.getElementById('shortlink-textfield'));
+  const resultTextField = 
+      new MDCTextField(document.getElementById('result-textfield'));
+  const linkInput = document.getElementById('shortlink-input');
+  const resultInput = document.getElementById('result-input');
+  const dialogAddButton = document.getElementById('dialog-add-button');
+
+  /** Enable the add button upon both fields being nonempty. */
+  const inputListener = () => {
+    if (linkTextfield.value && resultTextField.value) {
+      dialogAddButton.disabled = false;
+    } else {
+      dialogAddButton.disabled = true;
+    }
+  }
+
+  /** 
+   * Appends a slash to shortlinks to transparently show users what their
+   * shortlink will become (eg, m => m/).
+   */
+  const appendSlashListener = () => {
+    if (linkTextfield.value) {
+      linkTextfield.value = stripScheme(canonicalize(linkTextfield.value));
+    }
+  }
+
+  linkInput.addEventListener('change', inputListener);
+  linkInput.addEventListener('change', appendSlashListener);
+  resultInput.addEventListener('change', inputListener);
+
+  const successSnackbar = 
+      new MDCSnackbar(document.getElementById('success-snackbar'));
+  const failureSnackbar = 
+      new MDCSnackbar(document.getElementById('failure-snackbar'));
+
+  /** 
+   * Tries to submit the add form. Closes the dialog if sucessful, otherwise
+   * displays an error.
+   */
+  const submitAddForm = () => {
+    ShortlinkMessenger.
+        sendAddMessage(linkTextfield.value, resultTextField.value).then(
+      () => {
+        successSnackbar.open();
+        dialog.close();
+        linkTextfield.value = '';
+        resultTextField.value = '';
+      },
+      (reason) => {
+        failureSnackbar.labelText = 'Failed to add shortlink: ' + reason;
+        failureSnackbar.open();
+      }
+    )
+  }
+
+  dialogAddButton.addEventListener('click', submitAddForm);
 }
 
 renderPage().then(() => {
