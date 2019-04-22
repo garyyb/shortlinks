@@ -22,5 +22,10 @@
     "page": "src/options/options.html",
     "browser_style": false,
     "open_in_tab": true
+  },
+  "browser_action": {
+    "default_icon": "assets/icons/twotone_link_black_18dp.png",
+    "default_title": "Shortlinks",
+    "default_popup": "src/popup/popup.html"
   }
 }
