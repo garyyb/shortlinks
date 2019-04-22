@@ -25,9 +25,7 @@ async function renderPage() {
   }
 }
 
-/**
- * Sets up the add shortlink dialog.
- */
+/** Sets up the add shortlink dialog. */
 function setupAddDialog() {
   const dialog = new MDCDialog(document.getElementById('add-dialog'));
   document.getElementById('add-button').addEventListener('click', () => {
@@ -111,6 +109,7 @@ async function refreshShortlinks() {
   oldList.replaceWith(template.content.firstChild);
 }
 
+/** Sets up the refresh button in the shortlink list. */
 function setupRefreshButton() {
   const refreshButton = document.getElementById('refresh-button');
   const successSnackbar = 
@@ -128,6 +127,7 @@ function setupRefreshButton() {
   });
 }
 
+/** Sets up the delete shortlink buttons in the shortlink list. */
 function setupDeleteButtons() {
   const successSnackbar = 
       new MDCSnackbar(document.getElementById('delete-success-snackbar'));
