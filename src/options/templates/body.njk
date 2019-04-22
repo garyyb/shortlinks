@@ -19,9 +19,70 @@
   <div class="mdc-card__actions">
     <div class="mdc-card__action-buttons">
       <button class="mdc-button mdc-card__action mdc-card__action--button" id="add-button">Add</button>
+      <button class="mdc-button mdc-card__action mdc-card__action--button" id="refresh-button">Refresh</button>
     </div>
   </div>  
 </div>
 
 {% include "addDialog.njk" %}
+{% endblock %}
+
+{% block refreshSnackbars %}
+<div class="mdc-snackbar" id="refresh-success-snackbar">
+  <div class="mdc-snackbar__surface">
+    <div class="mdc-snackbar__label"
+         role="status"
+         aria-live="polite">
+      Successfully refreshed shortlinks.
+    </div>
+
+    <div class="mdc-snackbar__actions">
+      <button class="mdc-icon-button mdc-snackbar__dismiss material-icons" title="Dismiss">close</button>
+    </div>
+  </div>
+</div>
+
+<div class="mdc-snackbar" id="refresh-failure-snackbar">
+  <div class="mdc-snackbar__surface">
+    <div class="mdc-snackbar__label"
+         role="status"
+         aria-live="polite">
+      Failed to add shortlink: an unknown error occurred.
+    </div>
+
+    <div class="mdc-snackbar__actions">
+      <button class="mdc-icon-button mdc-snackbar__dismiss material-icons" title="Dismiss">close</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block deleteSnackbars %}
+<div class="mdc-snackbar" id="delete-success-snackbar">
+  <div class="mdc-snackbar__surface">
+    <div class="mdc-snackbar__label"
+         role="status"
+         aria-live="polite">
+      Successfully deleted shortlink.
+    </div>
+
+    <div class="mdc-snackbar__actions">
+      <button class="mdc-icon-button mdc-snackbar__dismiss material-icons" title="Dismiss">close</button>
+    </div>
+  </div>
+</div>
+
+<div class="mdc-snackbar" id="delete-failure-snackbar">
+  <div class="mdc-snackbar__surface">
+    <div class="mdc-snackbar__label"
+         role="status"
+         aria-live="polite">
+      Failed to delete shortlink: an unknown error occurred.
+    </div>
+
+    <div class="mdc-snackbar__actions">
+      <button class="mdc-icon-button mdc-snackbar__dismiss material-icons" title="Dismiss">close</button>
+    </div>
+  </div>
+</div>
 {% endblock %}

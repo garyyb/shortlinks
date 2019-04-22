@@ -66,7 +66,8 @@ class ShortlinkManager {
    */
   async deleteShortlink(shortlink) {
     try { 
-      await browser.storage.sync.remove(shortlink);
+      console.log('Shortlinks: Deleting Shortlink: ' + shortlink);
+      await browser.storage.sync.remove(canonicalize(shortlink));
       return '';
     } catch (reason) {
       return reason;
@@ -154,7 +155,7 @@ class ShortlinkManager {
     /**
      * @param {Object} request Request which contains a requestType property.
      * @returns {Promise} Promise fulfilled with an empty value if the request
-     *                    was successful, and rejected with an appropriate error
+     *                    was successful, and RESOLVED with an appropriate error
      *                    type if not.
      */
     const messageListener = (request) => {

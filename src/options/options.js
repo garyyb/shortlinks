@@ -66,9 +66,9 @@ function setupAddDialog() {
   resultInput.addEventListener('change', inputListener);
 
   const successSnackbar = 
-      new MDCSnackbar(document.getElementById('success-snackbar'));
+      new MDCSnackbar(document.getElementById('add-success-snackbar'));
   const failureSnackbar = 
-      new MDCSnackbar(document.getElementById('failure-snackbar'));
+      new MDCSnackbar(document.getElementById('add-failure-snackbar'));
 
   /** 
    * Tries to submit the add form. Closes the dialog if sucessful, otherwise
@@ -78,6 +78,7 @@ function setupAddDialog() {
     ShortlinkMessenger.
         sendAddMessage(linkTextfield.value, resultTextField.value).then(
       () => {
+        refreshShortlinks();
         successSnackbar.open();
         dialog.close();
         linkTextfield.value = '';
@@ -93,7 +94,69 @@ function setupAddDialog() {
   dialogAddButton.addEventListener('click', submitAddForm);
 }
 
+/** 
+ * Refreshes shortlinks and rerenders the list. 
+ * @returns {Promise} Resolved when list has been rerendered, or rejected if
+ *                    there was an error in fetching updated shortlinks.
+ */
+async function refreshShortlinks() {
+  const shortlinks = await ShortlinkMessenger.sendFetchMessage();
+  const oldList = document.getElementById('shortlinks-list');
+  const newList = 
+      nunjucks.render('shortlinksList.njk', { shortlinks: shortlinks }).trim();
+  
+  const template = document.createElement('template');
+  template.innerHTML = newList;
+
+  oldList.replaceWith(template.content.firstChild);
+}
+
+function setupRefreshButton() {
+  const refreshButton = document.getElementById('refresh-button');
+  const successSnackbar = 
+      new MDCSnackbar(document.getElementById('refresh-success-snackbar'));
+  const failureSnackbar = 
+      new MDCSnackbar(document.getElementById('refresh-failure-snackbar'));
+  refreshButton.addEventListener('click', () => {
+    refreshShortlinks().then(
+      () => successSnackbar.open(),
+      (reason) => {
+        failureSnackbar.labelText = 'Failed to refresh shortlinks: ' + reason;
+        failureSnackbar.open();
+      }
+    );
+  });
+}
+
+function setupDeleteButtons() {
+  const successSnackbar = 
+      new MDCSnackbar(document.getElementById('delete-success-snackbar'));
+  const failureSnackbar = 
+      new MDCSnackbar(document.getElementById('delete-failure-snackbar'));
+  
+  const onSuccessfulDelete = () => {
+    refreshShortlinks();
+    successSnackbar.open();
+  }
+
+  const onFailedDelete = (reason) => {
+    failureSnackbar.labelText = 'Failed to delete shortlink: ' + reason;
+    failureSnackbar.open();
+  }
+
+  const deleteButtons = 
+      Array.from(document.querySelectorAll('.shortlink-delete'));
+  deleteButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      ShortlinkMessenger.sendDeleteMessage(button.dataset.toDelete)
+                        .then(onSuccessfulDelete, onFailedDelete);
+    });
+  });
+}
+
 renderPage().then(() => {
   // Do any additional page setup, now that the page has finished rendering.
-  setupAddDialog()
+  setupAddDialog();
+  setupRefreshButton();
+  setupDeleteButtons();
 });

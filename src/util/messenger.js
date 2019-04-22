@@ -36,7 +36,7 @@ class ShortlinkMessenger {
    *                   was successful, or rejected with a reason if it wasn't.
    */
   static async sendDeleteMessage(shortlink) {
-    const errorOrEmpty = browser.runtime.sendMessage({
+    const errorOrEmpty = await browser.runtime.sendMessage({
       messageType: MessageType.DELETE,
       shortlink: shortlink
     });

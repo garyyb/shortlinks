@@ -31,3 +31,11 @@ body {
 .mdc-text-field {
   margin: 12px;
 }
+
+.mdc-list-item {
+  cursor: default !important;
+}
+
+.shortlink-delete {
+  cursor: pointer;
+}
