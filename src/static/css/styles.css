@@ -39,3 +39,9 @@ body {
 .shortlink-delete {
   cursor: pointer;
 }
+
+.popup-button {
+  margin: 12px;
+  margin-top: 0px;
+  float: right;
+}

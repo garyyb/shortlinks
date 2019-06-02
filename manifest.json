@@ -11,6 +11,7 @@
   "version": "1.0",
   "permissions": [
     "storage",
+    "tabs",
     "webRequest",
     "webRequestBlocking",
     "<all_urls>"
