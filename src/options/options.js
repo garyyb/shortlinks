@@ -107,6 +107,7 @@ async function refreshShortlinks() {
   template.innerHTML = newList;
 
   oldList.replaceWith(template.content.firstChild);
+  setupDeleteButtons();
 }
 
 /** Sets up the refresh button in the shortlink list. */
