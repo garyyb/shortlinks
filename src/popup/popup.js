@@ -1,6 +1,7 @@
 goog.module('shortlinks.popup.popup');
 
 const {ShortlinkMessenger} = goog.require('shortlinks.util.messenger');
+const MDCSnackbar = mdc.snackbar.MDCSnackbar;
 const MDCTextField = mdc.textField.MDCTextField;
 
 const {canonicalize, stripScheme} = goog.require('shortlinks.util.canonicalize');
@@ -43,13 +44,20 @@ function renderPage() {
   const tabs = browser.tabs.query({currentWindow: true, active: true});
   tabs.then(tabs => resultTextField.value = tabs[0].url);
 
+  const successSnackbar = 
+      new MDCSnackbar(document.getElementById('add-success-snackbar'));
+  const failureSnackbar = 
+      new MDCSnackbar(document.getElementById('add-failure-snackbar'));
+
   const submitAddForm = () => {
     ShortlinkMessenger.
         sendAddMessage(linkTextfield.value, resultTextField.value).then(
-      () => {},
+      () => {
+        successSnackbar.open();
+      },
       (reason) => {
-        console.log('Shortlinks: adding shortlink failed with reason ' + 
-                     reason);
+        failureSnackbar.labelText = 'Failed to refresh shortlinks: ' + reason;
+        failureSnackbar.open();
       }
     );
   }

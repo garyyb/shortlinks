@@ -25,8 +25,38 @@
     </div>
   </div>
 </div>
+
 <br>
+
 <button class="mdc-button mdc-button--outlined popup-button" id="add-button" disabled>
   <i class="material-icons mdc-button__icon">add</i>
   <span class="mdc-button__label">Add</span>
 </button>
+
+<div class="mdc-snackbar" id="add-success-snackbar">
+  <div class="mdc-snackbar__surface">
+    <div class="mdc-snackbar__label"
+         role="status"
+         aria-live="polite">
+      Successfully added shortlink!
+    </div>
+
+    <div class="mdc-snackbar__actions">
+      <button class="mdc-icon-button mdc-snackbar__dismiss material-icons" title="Dismiss">close</button>
+    </div>
+  </div>
+</div>
+
+<div class="mdc-snackbar" id="add-failure-snackbar">
+  <div class="mdc-snackbar__surface">
+    <div class="mdc-snackbar__label"
+         role="status"
+         aria-live="polite">
+      Failed to add shortlink.
+    </div>
+
+    <div class="mdc-snackbar__actions">
+      <button class="mdc-icon-button mdc-snackbar__dismiss material-icons" title="Dismiss">close</button>
+    </div>
+  </div>
+</div>
